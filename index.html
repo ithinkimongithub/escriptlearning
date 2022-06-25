@@ -8,13 +8,30 @@
 </head>
 <body>
 
-<h1>This is a Heading</h1>
-<p>This is a paragraph.</p>
+<h1>Excel File Reader</h1>
+<p>Choose a file and your browser will read it. I use the Community Edition of Sheets JS.</p>
 
+<input type="file" name="xlfile" id="xlf" onchange="openXLF()"/>
+<p id="pstatus"></p>
 </body>
 <script>
-    //javascript here
+    function process_wb(wb){
+        var ws = wb.Sheets[wb.SheetNames[0]];
+        var data = XLSX.utils.sheet_to_html(ws, {header:1});
+        document.getElementById("pstatus").innerHTML=data;
+    }
 
+    function openXLF(){
+        document.getElementById("pstatus").innerHTML="Opening File...";
+        var f = event.target.files[0];
+        var reader = new FileReader();
+        reader.onload = function(event){
+            var data = event.target.result;
+            data = new Uint8Array(data);
+            process_wb(XLSX.read(data, {type: 'array'}));
+        };
+        reader.readAsArrayBuffer(f);
+    }
 
 
 </script>
