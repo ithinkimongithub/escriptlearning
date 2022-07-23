@@ -1,40 +1,74 @@
 <!DOCTYPE html>
 <html>
-    
-<script lang="javascript" src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script> <!--Sheets JS-->
 
 <head>
 <title>Page Title</title>
+
+<style>
+    table, th, td {
+      border: 1px solid black;
+      border-collapse: collapse;
+    }
+    </style>
 </head>
+
 <body>
 
-<h1>Excel File Reader</h1>
-<p>Choose a file and your browser will read it. I use the Community Edition of Sheets JS.</p>
+<h1>Generate a questionnaire</h1>
+<input type="button" value="do something" onclick="dowork()"/>
+<div id="dynamictable"></div>
 
-<input type="file" name="xlfile" id="xlf" onchange="openXLF()"/>
+<table>
+    <tr>
+        <th>Left</th>
+        <th>Center</th>
+        <th>Right</th>
+    </tr>
+    <tr>
+        <td>Text1</td>
+        <td>Text2</td>
+        <td>Text3</td>
+    </tr>
+    <tr>
+        <td>Text1</td>
+        <td>Text2</td>
+        <td>Text3</td>
+    </tr>
+</table>
+
 <p id="pstatus"></p>
 </body>
 <script>
-    function process_wb(wb){
-        var ws = wb.Sheets[wb.SheetNames[0]];
-        var data = XLSX.utils.sheet_to_html(ws, {header:1});
-        var range = XLSX.utils.decode_range(ws['!ref']);
-        document.getElementById("pstatus").innerHTML=data;
+
+    function dowork(){
+        document.getElementById("pstatus").textContent="I did it";
+        var data = new Array();
+        data.push(["left1","center1","right1"]);
+        data.push(["left2","center2","right2"]);
+        data.push(["left3","center3","right3"]);
+        data.push(["left4","center4","right4"]);
+
+        var dtable = document.createElement("TABLE");
+        dtable.border = "1";
+        var ncols =  data[0].length;
+        var row = dtable.insertRow(-1);
+        for(var i = 0; i < ncols; i++){
+            var header = document.createElement("TH");
+            header.innerHTML = data[0][i];
+            row.appendChild(header);
+        }
+        for(var i = 1; i < data.length; i++){
+            row = dtable.insertRow(-1);
+            for(var j = 0; j < ncols; j++){
+                var cell = row.insertCell(-1);
+                cell.innerHTML = data[i][j];
+            }
+        }
+
+        var tablediv = document.getElementById("dynamictable");
+        tablediv.innerHTML= "";
+        tablediv.appendChild(dtable);
     }
-
-    function openXLF(){
-        document.getElementById("pstatus").innerHTML="Opening File...";
-        var f = event.target.files[0];
-        var reader = new FileReader();
-        reader.onload = function(event){
-            var data = event.target.result;
-            data = new Uint8Array(data);
-            process_wb(XLSX.read(data, {type: 'array'}));  
-            //for input type "array"	= array of 8-bit unsigned int (byte n is data[n])
-        };
-        reader.readAsArrayBuffer(f);
-    }
-
-
+        
 </script>
 </html>
